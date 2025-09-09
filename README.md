@@ -1,52 +1,173 @@
 # AWS EKS Cluster with AWS CLI
 
-A collection of bash scripts to deploy and destroy a production-ready Amazon EKS cluster with VPC, NodeGroups, and AWS Load Balancer Controller using AWS CLI and CloudFormation.
+🚀 **Production-ready automation scripts for deploying Amazon EKS clusters using pure AWS CLI and CloudFormation templates. Complete infrastructure-as-code solution with VPC, managed node groups, and AWS Load Balancer Controller.**
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![AWS](https://img.shields.io/badge/AWS-EKS-orange.svg)](https://aws.amazon.com/eks/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.29-blue.svg)](https://kubernetes.io/)
 
-- **VPC with 3 Availability Zones** - 3 public + 3 private subnets with NAT Gateway
-- **EKS Cluster** - Kubernetes 1.29 with proper IAM roles and OIDC provider
-- **Managed NodeGroup** - Auto-scaling worker nodes in private subnets
-- **AWS Load Balancer Controller** - For ingress and load balancing
-- **Complete Cleanup** - Destroy scripts remove all created resources
-- **Interactive Prompts** - Configurable parameters with sensible defaults
+## ✨ Key Features
 
-## Prerequisites
+- 🏗️ **Multi-AZ VPC Infrastructure** - 3 availability zones with public/private subnets
+- ⚡ **EKS Cluster v1.29** - Latest Kubernetes with OIDC provider integration
+- 🔄 **Auto-Scaling Node Groups** - Managed worker nodes in private subnets
+- 🌐 **AWS Load Balancer Controller** - Advanced ingress and load balancing
+- 🛡️ **Security Best Practices** - IAM roles, security groups, and network ACLs
+- 🧹 **Complete Cleanup** - Automated resource destruction with verification
+- 📊 **Cost Optimization** - Efficient resource sizing and cleanup automation
+- 🔧 **Interactive Configuration** - Customizable parameters with sensible defaults
 
-- AWS CLI v2 installed and configured
-- kubectl installed
-- Helm v3 installed
-- jq installed
-- Proper AWS IAM permissions for EKS, VPC, IAM, and EC2
+## 📋 Prerequisites
 
-## Quick Start
+### Required Tools
 
-### 1. Deploy VPC
+| Tool | Version | Installation Command |
+|------|---------|---------------------|
+| **AWS CLI** | v2.0+ | `curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"` |
+| **kubectl** | v1.28+ | `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"` |
+| **Helm** | v3.12+ | `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 \| bash` |
+| **jq** | v1.6+ | `sudo apt-get install jq` (Ubuntu) or `brew install jq` (macOS) |
+
+### AWS Configuration
+
+```bash
+# Configure AWS credentials
+aws configure
+# Follow prompts to enter your AWS credentials
+# Default region name: eu-central-1
+# Default output format: json
+
+# Verify configuration
+aws sts get-caller-identity
+```
+
+### Required AWS IAM Permissions
+
+Your AWS user/role must have the following permissions:
+
+#### Core Services
+- `AmazonEKSClusterPolicy`
+- `AmazonEKSWorkerNodePolicy` 
+- `AmazonEKS_CNI_Policy`
+- `AmazonEC2ContainerRegistryReadOnly`
+
+#### Infrastructure Management
+- `EC2FullAccess` (VPC, subnets, security groups)
+- `IAMFullAccess` (create/manage service roles)
+- `CloudFormationFullAccess` (deploy/manage stacks)
+
+#### Specific Actions Required
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "eks:*",
+        "ec2:*",
+        "iam:*",
+        "cloudformation:*",
+        "elasticloadbalancing:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### System Requirements
+- **Operating System**: Linux, macOS, or WSL2
+- **Memory**: 2GB+ RAM available
+- **Storage**: 5GB+ free space
+- **Network**: Internet connectivity for AWS API calls
+
+## 🚀 Quick Start
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/uldyssian-sh/aws-eks-cluster-awscli.git
+cd aws-eks-cluster-awscli
+chmod +x scripts/*.sh
+```
+
+### 2. Deploy VPC Infrastructure
 ```bash
 ./scripts/create-vpc.sh
 ```
+**Input prompts:**
+- AWS Region (default: eu-central-1)
+- VPC Stack Name (default: eks-vpc)
+- VPC CIDR Block (default: 10.0.0.0/16)
 
-### 2. Deploy EKS Cluster
+**Execution time:** ~5-8 minutes
+
+### 3. Deploy EKS Cluster
 ```bash
 ./scripts/create-eks.sh
 ```
+**Input prompts:**
+- EKS Cluster Name (default: eks-demo)
+- Kubernetes Version (default: 1.29)
+- Node Instance Type (default: t3.medium)
+- Desired Node Count (default: 3)
 
-### 3. Verify Deployment
+**Execution time:** ~15-20 minutes
+
+### 4. Verify Deployment
 ```bash
-kubectl get nodes
+# Check cluster status
+aws eks describe-cluster --name eks-demo --region eu-central-1
+
+# Verify nodes
+kubectl get nodes -o wide
+
+# Check system pods
 kubectl get pods -n kube-system
+
+# Test AWS Load Balancer Controller
+kubectl get deployment -n kube-system aws-load-balancer-controller
 ```
 
-## Cleanup
+## 🧹 Cleanup
 
-### Destroy EKS Cluster
+### 1. Destroy EKS Cluster
 ```bash
 ./scripts/destroy-eks.sh
 ```
+**What it removes:**
+- EKS Cluster and Node Groups
+- AWS Load Balancer Controller
+- IAM Roles and Policies
+- Security Groups
+- OIDC Provider
 
-### Destroy VPC
+**Execution time:** ~10-15 minutes
+
+### 2. Destroy VPC Infrastructure
 ```bash
 ./scripts/delete-vpc.sh
+```
+**What it removes:**
+- VPC and all subnets
+- Internet Gateway and NAT Gateways
+- Route Tables and Network ACLs
+- CloudFormation Stack
+
+**Execution time:** ~5-8 minutes
+
+### 3. Verification
+Both destroy scripts provide detailed verification reports:
+```
+=== DESTRUCTION COMPLETE - VERIFICATION REPORT ===
+✅ EKS Cluster removed: eks-demo
+✅ NodeGroup removed: ng-1
+✅ IAM Roles removed: 3
+✅ Security Groups removed: 2
+✅ VPC Stack removed: eks-vpc
+
+🎉 All resources successfully destroyed!
+💰 No ongoing AWS charges from this deployment.
 ```
 
 ## Architecture
@@ -168,9 +289,13 @@ aws-eks-cluster-awscli/
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## Author
+## 👨‍💻 Author
 
-**LT** - [GitHub Profile](https://github.com/lubomir-tobek)
+**LT** - [GitHub Profile](https://github.com/uldyssian-sh)
+
+## 🔗 Repository
+
+[aws-eks-cluster-awscli](https://github.com/uldyssian-sh/aws-eks-cluster-awscli)
 
 ---
 
