@@ -68,7 +68,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
-    verbs: ["create","list","watch"]
+    verbs: ["create", "list", "watch"]
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: ["cluster-autoscaler-status", "cluster-autoscaler-priority-expander"]
@@ -149,7 +149,8 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             - --expander=least-waste
-            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/eks-demo
+            - >
+              --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/eks-demo
             - --balance-similar-node-groups
             - --skip-nodes-with-system-pods=false
           volumeMounts:
