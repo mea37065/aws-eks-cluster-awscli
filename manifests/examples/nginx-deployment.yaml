@@ -15,10 +15,10 @@ spec:
         app: nginx
     spec:
       containers:
-      - name: nginx
+        - name: nginx
         image: nginx:1.25
         ports:
-        - containerPort: 80
+          - containerPort: 80
         resources:
           requests:
             memory: "64Mi"
@@ -32,22 +32,22 @@ spec:
           runAsUser: 101
           capabilities:
             drop:
-            - ALL
+              - ALL
           readOnlyRootFilesystem: true
         volumeMounts:
-        - name: tmp
-          mountPath: /tmp
-        - name: var-cache
-          mountPath: /var/cache/nginx
-        - name: var-run
-          mountPath: /var/run
+          - name: tmp
+            mountPath: /tmp
+          - name: var-cache
+            mountPath: /var/cache/nginx
+          - name: var-run
+            mountPath: /var/run
       volumes:
-      - name: tmp
-        emptyDir: {}
-      - name: var-cache
-        emptyDir: {}
-      - name: var-run
-        emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: var-cache
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -73,12 +73,12 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /
 spec:
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 80
