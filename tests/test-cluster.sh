@@ -52,13 +52,13 @@ test_nodes_ready() {
 test_system_pods() {
   echo -e "${CYAN}Testing system pods...${NC}"
   local failed_pods
-  failed_pods=$(kubectl get pods -n kube-system --no-headers | grep -v "Running\|Completed" | wc -l)
+  failed_pods=$(kubectl get pods -n kube-system --no-headers | grep -vc "Running\|Completed")
   if [ "${failed_pods}" -eq 0 ]; then
     echo -e "${GREEN}✓ All system pods are running${NC}"
     return 0
   else
     echo -e "${RED}✗ ${failed_pods} system pods are not running${NC}"
-    kubectl get pods -n kube-system | grep -v "Running\|Completed" || true
+    kubectl get pods -n kube-system --no-headers | grep -v "Running\|Completed" || true
     return 1
   fi
 }

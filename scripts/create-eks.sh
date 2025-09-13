@@ -131,7 +131,7 @@ aws eks create-nodegroup \
   --nodegroup-name "${NODEGROUP_NAME}" \
   --node-role "${NODE_ROLE_ARN}" \
   --subnets "${PRV1}" "${PRV2}" "${PRV3}" \
-  --scaling-config minSize="${DESIRED_SIZE}",maxSize="$((DESIRED_SIZE+3))",desiredSize="${DESIRED_SIZE}" \
+  --scaling-config "minSize=${DESIRED_SIZE},maxSize=$((DESIRED_SIZE+3)),desiredSize=${DESIRED_SIZE}" \
   --instance-types "${INSTANCE_TYPE}" >/dev/null
 
 aws eks wait nodegroup-active --cluster-name "${CLUSTER_NAME}" --nodegroup-name "${NODEGROUP_NAME}" --region "${AWS_REGION}"
@@ -157,7 +157,7 @@ EOF
 
 echo -e "${MAGENTA}Associating OIDC provider for IRSA...${NC}"
 OIDC_ISSUER=$(aws eks describe-cluster --name "${CLUSTER_NAME}" --region "${AWS_REGION}" --query "cluster.identity.oidc.issuer" --output text)
-OIDC_HOST=$(echo "${OIDC_ISSUER}" | sed -e 's~https://~~')
+OIDC_HOST="${OIDC_ISSUER#https://}"
 # Use standard EKS OIDC thumbprint
 THUMBPRINT="9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
 aws iam create-open-id-connect-provider \
