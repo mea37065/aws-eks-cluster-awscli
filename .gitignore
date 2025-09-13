@@ -1,32 +1,62 @@
 # Environment files
 .env
+.env.local
+.env.*.local
 
 # Generated artifacts
 artifacts/
-*.json
+*.json.bak
+*.yaml.bak
 
-# AWS CLI cache
-.aws/
+# Terraform files
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfvars
+terraform/.terraform.tfstate.lock.info
 
-# Kubernetes config
+# Kubernetes configs
+*.kubeconfig
 kubeconfig*
+
+# AWS credentials
+.aws/
+aws-credentials
 
 # Logs
 *.log
+logs/
 
 # Temporary files
 *.tmp
 *.temp
-
-# macOS
 .DS_Store
+Thumbs.db
 
-# IDE
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # Backup files
-*~
 *.bak
+*.backup
+
+# Test results
+test-results/
+coverage/
+
+# Helm charts
+charts/
+*.tgz
+
+# Local development
+local/
+dev/
+
+# Security scan results
+trivy-results.sarif
+security-scan-results/
