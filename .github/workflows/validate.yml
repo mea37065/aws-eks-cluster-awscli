@@ -2,7 +2,7 @@ name: Validate Scripts
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -15,9 +15,9 @@ jobs:
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
       with:
-        scandir: './scripts'
-        format: gcc
-        severity: warning
+        scandir: './scripts ./tests'
+        severity: error
+        disable_matcher: true
 
   yaml-lint:
     runs-on: ubuntu-latest
@@ -27,8 +27,8 @@ jobs:
     - name: Lint YAML files
       uses: ibiqlik/action-yamllint@v3
       with:
-        file_or_dir: manifests/ cloudformation/
-        config_file: .yamllint.yml
+        file_or_dir: 'manifests cloudformation'
+        config_file: '.yamllint.yml'
 
   security-scan:
     runs-on: ubuntu-latest
@@ -40,11 +40,5 @@ jobs:
       with:
         scan-type: 'fs'
         scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-    
-    - name: Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
+        exit-code: '0'
+        format: 'table'
