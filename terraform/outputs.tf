@@ -11,6 +11,7 @@ output "cluster_arn" {
 output "cluster_endpoint" {
   description = "Endpoint for EKS control plane"
   value       = module.eks.cluster_endpoint
+  sensitive   = true
 }
 
 output "cluster_security_group_id" {

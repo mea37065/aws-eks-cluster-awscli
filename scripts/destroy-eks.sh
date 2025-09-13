@@ -76,7 +76,7 @@ OIDC_ISSUER=$(aws eks describe-cluster --name "${CLUSTER_NAME}" --region "${AWS_
 if [ -z "${OIDC_ISSUER}" ] && [ -n "${OIDC_PROVIDER_ARN:-}" ]; then
   OIDC_TO_DELETE="${OIDC_PROVIDER_ARN}"
 else
-  OIDC_HOST=$(echo "${OIDC_ISSUER}" | sed -e 's~https://~~')
+  OIDC_HOST="${OIDC_ISSUER#https://}"
   OIDC_TO_DELETE=$(aws iam list-open-id-connect-providers --query "OpenIDConnectProviderList[?contains(Arn, '${OIDC_HOST}')].Arn" --output text)
 fi
 if [ -n "${OIDC_TO_DELETE}" ]; then

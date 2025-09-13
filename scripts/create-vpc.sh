@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ANSI colors
-CYAN="\033[0;36m"; MAGENTA="\033[0;35m"; GREEN="\033[0;32m"; RED="\033[0;31m"; NC="\033[0m"
+CYAN="\033[0;36m"; MAGENTA="\033[0;35m"; GREEN="\033[0;32m"; NC="\033[0m"
 
 echo -e "${MAGENTA}=== VPC Creation (3 AZs, 3x public + 3x private, 1 NAT GW) ===${NC}"
 
@@ -32,6 +32,12 @@ read -rp "$(echo -e "${CYAN}Private subnet CIDRs [${PRV_CIDRS_DEFAULT}]:${NC}") 
 PRIVATE_CIDRS="${PRIVATE_CIDRS:-$PRV_CIDRS_DEFAULT}"
 
 CFN_TEMPLATE="cloudformation/vpc-3az.yaml"
+
+# Check if template file exists
+if [[ ! -f "$CFN_TEMPLATE" ]]; then
+  echo "Error: Template file not found: $CFN_TEMPLATE"
+  exit 1
+fi
 
 echo -e "${MAGENTA}Deploying CloudFormation stack ${STACK_NAME} in ${AWS_REGION}...${NC}"
 aws cloudformation deploy \

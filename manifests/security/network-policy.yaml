@@ -40,9 +40,9 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              name: default
+              kubernetes.io/metadata.name: default
   egress:
     - to:
         - namespaceSelector:
             matchLabels:
-              name: default
+              kubernetes.io/metadata.name: default

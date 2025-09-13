@@ -13,12 +13,23 @@ CLUSTER_NAME="${CLUSTER_NAME:-eks-demo}"
 AWS_REGION="${AWS_REGION:-eu-central-1}"
 
 echo -e "${CYAN}Installing Cluster Autoscaler...${NC}"
-kubectl apply -f manifests/cluster-autoscaler.yaml
+# Replace CLUSTER_NAME placeholder with actual cluster name
+sed "s/CLUSTER_NAME/${CLUSTER_NAME}/g" manifests/cluster-autoscaler.yaml | kubectl apply -f -
 kubectl -n kube-system annotate deployment.apps/cluster-autoscaler \
   cluster-autoscaler.kubernetes.io/safe-to-evict="false" --overwrite
 
 echo -e "${CYAN}Installing Metrics Server...${NC}"
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+# Download and verify metrics server manifest
+METRICS_SERVER_VERSION="v0.6.4"
+METRICS_SERVER_URL="https://github.com/kubernetes-sigs/metrics-server/releases/download/${METRICS_SERVER_VERSION}/components.yaml"
+echo "Downloading metrics server from: ${METRICS_SERVER_URL}"
+if curl -fsSL "${METRICS_SERVER_URL}" -o /tmp/metrics-server.yaml; then
+  kubectl apply -f /tmp/metrics-server.yaml
+  rm -f /tmp/metrics-server.yaml
+else
+  echo "Error: Failed to download metrics server manifest"
+  exit 1
+fi
 
 echo -e "${CYAN}Installing EBS CSI Driver...${NC}"
 aws eks create-addon \

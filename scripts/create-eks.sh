@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CYAN="\033[0;36m"; MAGENTA="\033[0;35m"; GREEN="\033[0;32m"; RED="\033[0;31m"; NC="\033[0m"
+CYAN="\033[0;36m"; MAGENTA="\033[0;35m"; GREEN="\033[0;32m"; NC="\033[0m"
 
 echo -e "${MAGENTA}=== EKS Cluster + NodeGroup + OIDC + AWS Load Balancer Controller ===${NC}"
 
@@ -10,35 +10,73 @@ if [ -f .env ]; then
   set -a; source .env; set +a
 fi
 
-read -rp "$(echo -e ${CYAN}Cluster name [eks-demo]:${NC} ) " CLUSTER_NAME
+read -rp "$(echo -e "${CYAN}Cluster name [eks-demo]:${NC}") " CLUSTER_NAME
 CLUSTER_NAME="${CLUSTER_NAME:-eks-demo}"
 
-read -rp "$(echo -e ${CYAN}Kubernetes version [1.29]:${NC} ) " K8S_VERSION
+read -rp "$(echo -e "${CYAN}Kubernetes version [1.29]:${NC}") " K8S_VERSION
 K8S_VERSION="${K8S_VERSION:-1.29}"
 
-read -rp "$(echo -e ${CYAN}Node group name [ng-1]:${NC} ) " NODEGROUP_NAME
+read -rp "$(echo -e "${CYAN}Node group name [ng-1]:${NC}") " NODEGROUP_NAME
 NODEGROUP_NAME="${NODEGROUP_NAME:-ng-1}"
 
-read -rp "$(echo -e ${CYAN}Worker instance type [t3.medium]:${NC} ) " INSTANCE_TYPE
+read -rp "$(echo -e "${CYAN}Worker instance type [t3.medium]:${NC}") " INSTANCE_TYPE
 INSTANCE_TYPE="${INSTANCE_TYPE:-t3.medium}"
 
-read -rp "$(echo -e ${CYAN}Desired worker count [3]:${NC} ) " DESIRED_SIZE
+read -rp "$(echo -e "${CYAN}Desired worker count [3]:${NC}") " DESIRED_SIZE
 DESIRED_SIZE="${DESIRED_SIZE:-3}"
 
-read -rp "$(echo -e ${CYAN}AWS region [${AWS_REGION:-eu-central-1}]:${NC} ) " AWS_REGION_INPUT
+read -rp "$(echo -e "${CYAN}AWS region [${AWS_REGION:-eu-central-1}]:${NC}") " AWS_REGION_INPUT
 AWS_REGION="${AWS_REGION_INPUT:-${AWS_REGION:-eu-central-1}}"
 
-read -rp "$(echo -e ${CYAN}VPC stack name [${VPC_STACK_NAME:-eks-vpc}]:${NC} ) " VPC_STACK_INPUT
+read -rp "$(echo -e "${CYAN}VPC stack name [${VPC_STACK_NAME:-eks-vpc}]:${NC}") " VPC_STACK_INPUT
 VPC_STACK_NAME="${VPC_STACK_INPUT:-${VPC_STACK_NAME:-eks-vpc}}"
 
 echo -e "${MAGENTA}Retrieving VPC and Subnets from stack ${VPC_STACK_NAME}...${NC}"
-STACK_JSON=$(aws cloudformation describe-stacks --stack-name "${VPC_STACK_NAME}" --region "${AWS_REGION}")
+if ! STACK_JSON=$(aws cloudformation describe-stacks --stack-name "${VPC_STACK_NAME}" --region "${AWS_REGION}" 2>/dev/null); then
+  echo -e "${RED:-\033[0;31m}Error: CloudFormation stack '${VPC_STACK_NAME}' not found in region '${AWS_REGION}'${NC}"
+  exit 1
+fi
+
 VPC_ID=$(echo "$STACK_JSON" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="VpcId") | .OutputValue')
 PUBLIC_SUBNET_IDS=$(echo "$STACK_JSON" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="PublicSubnetIds") | .OutputValue')
 PRIVATE_SUBNET_IDS=$(echo "$STACK_JSON" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="PrivateSubnetIds") | .OutputValue')
 
+# Validate required outputs
+if [[ -z "$VPC_ID" || "$VPC_ID" == "null" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: VPC ID not found in stack outputs${NC}"
+  exit 1
+fi
+if [[ -z "$PUBLIC_SUBNET_IDS" || "$PUBLIC_SUBNET_IDS" == "null" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Public subnet IDs not found in stack outputs${NC}"
+  exit 1
+fi
+if [[ -z "$PRIVATE_SUBNET_IDS" || "$PRIVATE_SUBNET_IDS" == "null" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Private subnet IDs not found in stack outputs${NC}"
+  exit 1
+fi
+
 IFS=',' read -r PUB1 PUB2 PUB3 <<< "${PUBLIC_SUBNET_IDS}"
 IFS=',' read -r PRV1 PRV2 PRV3 <<< "${PRIVATE_SUBNET_IDS}"
+
+# Validate subnet parsing
+if [[ -z "$PUB1" || -z "$PUB2" || -z "$PUB3" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Expected 3 public subnets, got: ${PUBLIC_SUBNET_IDS}${NC}"
+  exit 1
+fi
+if [[ -z "$PRV1" || -z "$PRV2" || -z "$PRV3" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Expected 3 private subnets, got: ${PRIVATE_SUBNET_IDS}${NC}"
+  exit 1
+fi
+
+# Validate subnet parsing
+if [[ -z "$PUB1" || -z "$PUB2" || -z "$PUB3" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Expected 3 public subnets, got: ${PUBLIC_SUBNET_IDS}${NC}"
+  exit 1
+fi
+if [[ -z "$PRV1" || -z "$PRV2" || -z "$PRV3" ]]; then
+  echo -e "${RED:-\033[0;31m}Error: Expected 3 private subnets, got: ${PRIVATE_SUBNET_IDS}${NC}"
+  exit 1
+fi
 
 echo -e "${MAGENTA}Creating IAM role for EKS Cluster...${NC}"
 CLUSTER_ROLE_NAME="eksClusterRole-${CLUSTER_NAME}"
@@ -154,8 +192,6 @@ cat > artifacts/alb-trust-policy.json <<TP
   } ]
 }
 TP
-
-
 
 aws iam create-role --role-name "${ALB_ROLE_NAME}" \
   --assume-role-policy-document file://artifacts/alb-trust-policy.json >/dev/null || true

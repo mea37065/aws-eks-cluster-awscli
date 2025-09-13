@@ -1,3 +1,6 @@
+# DEPRECATED: PodSecurityPolicy is deprecated in Kubernetes 1.21+ and removed in 1.25+
+# Use Pod Security Standards instead: https://kubernetes.io/docs/concepts/security/pod-security-standards/
+# This file is kept for reference but should not be applied to clusters running Kubernetes 1.25+
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:

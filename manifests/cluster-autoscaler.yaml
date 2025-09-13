@@ -32,7 +32,13 @@ rules:
     resources: ["nodes"]
     verbs: ["watch", "list", "get", "update"]
   - apiGroups: [""]
-    resources: ["namespaces", "pods", "services", "replicationcontrollers", "persistentvolumeclaims", "persistentvolumes"]
+    resources:
+      - "namespaces"
+      - "pods"
+      - "services"
+      - "replicationcontrollers"
+      - "persistentvolumeclaims"
+      - "persistentvolumes"
     verbs: ["watch", "list", "get"]
   - apiGroups: ["extensions"]
     resources: ["replicasets", "daemonsets"]
@@ -149,15 +155,17 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             - --expander=least-waste
-            - >
-              --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/eks-demo
+            # NOTE: Replace CLUSTER_NAME with your actual EKS cluster name
+            # yamllint disable-line rule:line-length
+            # Example: --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/my-cluster  # yamllint disable-line rule:line-length
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/CLUSTER_NAME  # yamllint disable-line rule:line-length
             - --balance-similar-node-groups
             - --skip-nodes-with-system-pods=false
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt
               readOnly: true
-          imagePullPolicy: "Always"
+          imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

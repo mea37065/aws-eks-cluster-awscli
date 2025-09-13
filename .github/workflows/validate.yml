@@ -39,5 +39,5 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          exit-code: '0'
+          exit-code: '1'
           format: 'table'
