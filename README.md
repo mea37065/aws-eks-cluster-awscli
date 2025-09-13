@@ -2,6 +2,8 @@
 
 🚀 **Production-ready automation scripts for deploying Amazon EKS clusters using pure AWS CLI and CloudFormation templates. Complete infrastructure-as-code solution with VPC, managed node groups, and AWS Load Balancer Controller.**
 
+**Author**: LT - [GitHub Profile](https://github.com/uldyssian-sh)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![AWS](https://img.shields.io/badge/AWS-EKS-orange.svg)](https://aws.amazon.com/eks/)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-1.29-blue.svg)](https://kubernetes.io/)
