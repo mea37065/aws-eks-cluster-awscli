@@ -1,0 +1,17 @@
+apiVersion: v2
+name: aws-eks-cluster
+description: A Helm chart for AWS EKS cluster deployment and management
+type: application
+version: 0.1.0
+appVersion: "1.0"
+keywords:
+  - aws
+  - eks
+  - kubernetes
+  - cluster
+home: https://github.com/mea37065/aws-eks-cluster-awscli
+sources:
+  - https://github.com/mea37065/aws-eks-cluster-awscli
+maintainers:
+  - name: AWS EKS Team
+    email: eks-team@example.com
