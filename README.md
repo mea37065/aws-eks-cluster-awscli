@@ -1,12 +1,19 @@
 # AWS EKS Cluster with AWS CLI
 
 🚀 **Production-ready automation scripts for deploying Amazon EKS clusters using pure AWS CLI and CloudFormation templates. Complete infrastructure-as-code solution with VPC, managed node groups, and AWS Load Balancer Controller.**
-![Tests](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/actions/workflows/test.yml/badge.svg)
-**Author**: LT - [GitHub Profile](https://github.com/uldyssian-sh)
 
+[![Tests](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/actions/workflows/test.yml/badge.svg)](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![AWS](https://img.shields.io/badge/AWS-EKS-orange.svg)](https://aws.amazon.com/eks/)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-1.29-blue.svg)](https://kubernetes.io/)
+[![Shell Script](https://img.shields.io/badge/Shell-Script-green.svg)](https://www.gnu.org/software/bash/)
+[![CloudFormation](https://img.shields.io/badge/CloudFormation-Template-blue.svg)](https://aws.amazon.com/cloudformation/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![GitHub stars](https://img.shields.io/github/stars/uldyssian-sh/aws-eks-cluster-awscli.svg)](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/uldyssian-sh/aws-eks-cluster-awscli.svg)](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/network)
+[![GitHub issues](https://img.shields.io/github/issues/uldyssian-sh/aws-eks-cluster-awscli.svg)](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/issues)
+
+**Author**: LT - [GitHub Profile](https://github.com/uldyssian-sh) | **Contributors**: [mea37065](https://github.com/mea37065)
 
 ## ✨ Key Features
 
@@ -279,13 +286,65 @@ aws-eks-cluster-awscli/
 └── README.md
 ```
 
-## Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+We welcome contributions from the community! Here's how you can help:
+
+### Ways to Contribute
+- 🐛 **Bug Reports**: Found an issue? [Create an issue](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/issues/new)
+- 💡 **Feature Requests**: Have an idea? [Submit a feature request](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/issues/new)
+- 📖 **Documentation**: Improve our docs and examples
+- 🔧 **Code**: Submit pull requests with improvements
+- ⭐ **Star**: Show your support by starring the repository
+
+### Development Process
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Make** your changes with proper testing
+4. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+5. **Push** to the branch (`git push origin feature/amazing-feature`)
+6. **Open** a Pull Request
+
+### Code Standards
+- Follow existing shell script conventions
+- Add comments for complex logic
+- Test scripts in multiple AWS regions
+- Update documentation for new features
+- Ensure cleanup scripts work properly
+
+### Community Guidelines
+- Be respectful and inclusive
+- Help others learn and grow
+- Share knowledge and best practices
+- Follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+
+## 🌟 Contributors
+
+Thanks to these amazing people who have contributed to this project:
+
+<a href="https://github.com/uldyssian-sh/aws-eks-cluster-awscli/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=uldyssian-sh/aws-eks-cluster-awscli" />
+</a>
+
+## 📊 Project Stats
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/uldyssian-sh/aws-eks-cluster-awscli)
+![GitHub last commit](https://img.shields.io/github/last-commit/uldyssian-sh/aws-eks-cluster-awscli)
+![GitHub repo size](https://img.shields.io/github/repo-size/uldyssian-sh/aws-eks-cluster-awscli)
+![Lines of code](https://img.shields.io/tokei/lines/github/uldyssian-sh/aws-eks-cluster-awscli)
+
+## 🔗 Related Projects
+
+- [VMware CIS VM Hardening](https://github.com/mea37065/vmware-cis-vm) - Security hardening for VMware VMs
+- [Kubernetes Security Tools](https://github.com/topics/kubernetes-security) - Collection of K8s security tools
+- [AWS EKS Best Practices](https://aws.github.io/aws-eks-best-practices/) - Official AWS EKS guidelines
+
+## 📞 Support
+
+- 📖 **Documentation**: Check our [Wiki](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/wiki)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/uldyssian-sh/aws-eks-cluster-awscli/discussions)
+- 📧 **Contact**: Reach out via GitHub profile
 
 ## License
 
