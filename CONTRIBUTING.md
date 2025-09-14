@@ -1,148 +1,137 @@
-# Contributing to AWS EKS Cluster CLI
+# Contributing to EKS Cluster Automation
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to this project.
+Thank you for your interest in contributing to our EKS automation project! This guide will help you get started with contributing code, documentation, and ideas.
 
-## Code of Conduct
+## 🤝 Ways to Contribute
 
-This project adheres to a code of conduct. By participating, you are expected to uphold this code.
+### Code Contributions
+- **Bug fixes**: Help resolve issues and improve stability
+- **New features**: Add functionality that benefits the community
+- **Performance improvements**: Optimize scripts and processes
+- **Security enhancements**: Strengthen security posture
+- **Documentation**: Improve guides, examples, and comments
 
-## How to Contribute
+### Community Contributions
+- **Issue reporting**: Help identify bugs and improvement opportunities
+- **Feature requests**: Suggest new capabilities and enhancements
+- **Testing**: Validate changes in different environments
+- **Discussions**: Share knowledge and help other users
+- **Reviews**: Provide feedback on pull requests
 
-### Reporting Issues
-
-Before creating an issue, please:
-1. Check existing issues to avoid duplicates
-2. Use the issue template if available
-3. Provide detailed information about the problem
-4. Include steps to reproduce the issue
-5. Specify your environment (OS, AWS CLI version, etc.)
-
-### Suggesting Enhancements
-
-Enhancement suggestions are welcome! Please:
-1. Check if the enhancement has already been suggested
-2. Provide a clear description of the enhancement
-3. Explain why this enhancement would be useful
-4. Consider the scope and complexity
-
-### Pull Requests
-
-1. **Fork the repository** and create your branch from `main`
-2. **Make your changes** following the coding standards
-3. **Test your changes** thoroughly
-4. **Update documentation** if needed
-5. **Submit a pull request** with a clear description
-
-#### Pull Request Process
-
-1. Ensure your code follows the project's coding standards
-2. Update the README.md if you change functionality
-3. Add tests for new features
-4. Ensure all tests pass
-5. Update the CHANGELOG.md
-6. Request review from maintainers
-
-## Development Setup
+## 🚀 Getting Started
 
 ### Prerequisites
+- **AWS Account** with appropriate permissions
+- **AWS CLI v2.0+** configured with credentials
+- **kubectl v1.28+** for Kubernetes management
+- **Helm v3.12+** for package management
+- **Git** for version control
+- **Bash/Shell** scripting knowledge
 
-- AWS CLI v2.0+
-- kubectl v1.28+
-- Helm v3.12+
-- jq v1.6+
-- shellcheck (for linting)
-- yamllint (for YAML validation)
+### Development Environment Setup
 
-### Local Development
+1. **Fork the repository**
+   ```bash
+   # Fork on GitHub, then clone your fork
+   git clone https://github.com/YOUR_USERNAME/aws-eks-cluster-awscli.git
+   cd aws-eks-cluster-awscli
+   ```
 
+2. **Set up upstream remote**
+   ```bash
+   git remote add upstream https://github.com/mea37065/aws-eks-cluster-awscli.git
+   ```
+
+3. **Install development dependencies**
+   ```bash
+   # Install shellcheck for script linting
+   sudo apt-get install shellcheck  # Ubuntu/Debian
+   brew install shellcheck          # macOS
+   
+   # Install additional tools
+   pip install pre-commit
+   pre-commit install
+   ```
+
+4. **Verify setup**
+   ```bash
+   # Test basic functionality
+   ./scripts/create-vpc.sh --help
+   aws sts get-caller-identity
+   kubectl version --client
+   ```
+
+## 📝 Development Workflow
+
+### 1. Create a Feature Branch
 ```bash
-# Clone the repository
-git clone https://github.com/uldyssian-sh/aws-eks-cluster-awscli.git
-cd aws-eks-cluster-awscli
+# Sync with upstream
+git fetch upstream
+git checkout main
+git merge upstream/main
 
-# Set up development environment
-make dev-setup
-
-# Run linting
-make lint
-
-# Test your changes
-make test
+# Create feature branch
+git checkout -b feature/your-feature-name
 ```
 
-## Coding Standards
+### 2. Make Your Changes
+- **Follow existing code style** and conventions
+- **Add comments** for complex logic
+- **Update documentation** as needed
+- **Include error handling** and validation
+- **Test in multiple environments** when possible
 
-### Shell Scripts
-
-- Use `#!/usr/bin/env bash` shebang
-- Enable strict mode: `set -euo pipefail`
-- Use meaningful variable names
-- Add comments for complex logic
-- Follow shellcheck recommendations
-- Use consistent indentation (2 spaces)
-
-### YAML Files
-
-- Use 2 spaces for indentation
-- Follow yamllint rules
-- Use meaningful names for resources
-- Add appropriate labels and annotations
-
-### Documentation
-
-- Use clear, concise language
-- Provide examples where helpful
-- Keep documentation up to date
-- Follow Markdown best practices
-
-## Testing
-
-### Manual Testing
-
-Before submitting changes:
-1. Test script functionality
-2. Verify documentation accuracy
-3. Check for breaking changes
-4. Test cleanup procedures
-
-### Automated Testing
-
-Run the test suite:
+### 3. Test Your Changes
 ```bash
-# Run all tests
-make test
+# Lint shell scripts
+shellcheck scripts/*.sh
 
-# Run specific tests
-./tests/test-cluster.sh cluster
-./tests/test-cluster.sh nodes
+# Test basic functionality
+./scripts/create-vpc.sh --dry-run
+./scripts/create-eks.sh --validate
+
+# Test cleanup procedures
+./scripts/destroy-eks.sh --verify
+./scripts/delete-vpc.sh --confirm
 ```
 
-## Security
+### 4. Commit Your Changes
+```bash
+# Stage changes
+git add .
 
-### Security Considerations
+# Commit with descriptive message
+git commit -m "feat: add multi-region support for EKS deployment
 
-- Never commit sensitive information
-- Use placeholder values in examples
-- Follow AWS security best practices
-- Implement least privilege principles
+- Implement cross-region VPC peering
+- Add Route 53 health checks for failover
+- Update documentation with multi-region examples
+- Include cost analysis for multi-region setup
 
-### Reporting Security Issues
+Resolves #7"
+```
 
-Please report security vulnerabilities privately to the maintainers.
+### 5. Push and Create Pull Request
+```bash
+# Push to your fork
+git push origin feature/your-feature-name
 
-## Release Process
+# Create pull request on GitHub
+gh pr create --title "feat: add multi-region support" --body "Description of changes..."
+```
 
-1. Update version numbers
-2. Update CHANGELOG.md
-3. Create release notes
-4. Tag the release
-5. Update documentation
+## 📋 Contribution Guidelines
 
-## Style Guide
+### Code Style
+- **Shell scripts**: Follow [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
+- **Indentation**: 2 spaces for shell scripts, 4 spaces for YAML
+- **Line length**: Maximum 100 characters
+- **Comments**: Explain complex logic and business decisions
+- **Error handling**: Always check command exit codes
 
 ### Commit Messages
+Follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 
-Use conventional commit format:
 ```
 type(scope): description
 
@@ -151,41 +140,138 @@ type(scope): description
 [optional footer]
 ```
 
-Types:
+**Types:**
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
 - `style`: Code style changes
 - `refactor`: Code refactoring
-- `test`: Test changes
+- `test`: Adding or updating tests
 - `chore`: Maintenance tasks
 
-### Branch Naming
+**Examples:**
+```
+feat(monitoring): add Prometheus alerting rules
+fix(vpc): resolve CIDR block conflict in multi-AZ setup
+docs(readme): update installation instructions
+```
 
-- `feature/description` - New features
-- `fix/description` - Bug fixes
-- `docs/description` - Documentation updates
-- `refactor/description` - Code refactoring
+### Pull Request Guidelines
 
-## Getting Help
+#### Before Submitting
+- [ ] Code follows project style guidelines
+- [ ] Self-review of code changes completed
+- [ ] Comments added for complex or unclear code
+- [ ] Documentation updated for new features
+- [ ] Tests added or updated as appropriate
+- [ ] All existing tests pass
+- [ ] No merge conflicts with main branch
 
-### Resources
+#### PR Description Template
+```markdown
+## Description
+Brief description of changes and motivation.
 
-- [AWS EKS Documentation](https://docs.aws.amazon.com/eks/)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [AWS CLI Documentation](https://docs.aws.amazon.com/cli/)
+## Type of Change
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
 
-### Contact
+## Testing
+- [ ] Tested in development environment
+- [ ] Tested in multiple AWS regions
+- [ ] Tested cleanup procedures
+- [ ] Manual testing completed
 
-- Create an issue for questions
-- Join discussions in pull requests
-- Check existing documentation
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] No merge conflicts
+```
 
-## Recognition
+## 🧪 Testing Guidelines
 
-Contributors will be recognized in:
-- README.md contributors section
-- Release notes
-- CHANGELOG.md
+### Manual Testing
+- **Test in clean environment**: Use fresh AWS account or region
+- **Test all code paths**: Success and failure scenarios
+- **Verify cleanup**: Ensure all resources are properly removed
+- **Cross-platform testing**: Test on different operating systems
+- **Multi-region testing**: Validate in different AWS regions
 
-Thank you for contributing to make this project better!
+### Automated Testing
+- **Shellcheck**: Lint all shell scripts
+- **YAML validation**: Validate CloudFormation and Kubernetes manifests
+- **Integration tests**: Test complete deployment workflows
+- **Security scanning**: Check for security vulnerabilities
+
+## 🐛 Bug Reports
+
+When reporting bugs, please include:
+
+1. **Environment details**: OS, AWS CLI version, region
+2. **Reproduction steps**: Exact commands and parameters used
+3. **Expected behavior**: What should have happened
+4. **Actual behavior**: What actually happened
+5. **Error logs**: Complete error messages and stack traces
+6. **Additional context**: Any other relevant information
+
+Use our [bug report template](.github/ISSUE_TEMPLATE/bug_report.yml) for structured reporting.
+
+## 💡 Feature Requests
+
+For feature requests, please provide:
+
+1. **Problem statement**: What problem does this solve?
+2. **Proposed solution**: How should it work?
+3. **Use cases**: Who would benefit and how?
+4. **Implementation ideas**: Any thoughts on implementation?
+5. **Alternatives considered**: Other approaches you've thought about?
+
+Use our [feature request template](.github/ISSUE_TEMPLATE/feature_request.yml).
+
+## 📚 Documentation
+
+### Types of Documentation
+- **README**: Overview and quick start guide
+- **Code comments**: Inline documentation for complex logic
+- **Architecture docs**: High-level system design
+- **Tutorials**: Step-by-step guides for specific use cases
+- **API docs**: Script parameters and usage examples
+
+### Documentation Standards
+- **Clear and concise**: Easy to understand for all skill levels
+- **Up-to-date**: Keep in sync with code changes
+- **Examples included**: Provide practical usage examples
+- **Troubleshooting**: Include common issues and solutions
+
+## 🏆 Recognition
+
+We value all contributions and recognize contributors in several ways:
+
+- **Contributors section** in README
+- **Release notes** mention significant contributions
+- **GitHub achievements** and contribution graphs
+- **Community discussions** highlighting great contributions
+
+## 📞 Getting Help
+
+### Community Support
+- **GitHub Discussions**: Ask questions and share ideas
+- **Issues**: Report bugs and request features
+- **Pull Request reviews**: Get feedback on your contributions
+
+### Direct Contact
+- **Maintainers**: [@uldyssian-sh](https://github.com/uldyssian-sh), [@mea37065](https://github.com/mea37065)
+- **Community**: Join our discussions and connect with other contributors
+
+## 📄 License
+
+By contributing to this project, you agree that your contributions will be licensed under the same [MIT License](LICENSE) that covers the project.
+
+---
+
+**Thank you for contributing to the EKS automation community!** 🎉
+
+Your contributions help make EKS deployment easier and more reliable for everyone.
