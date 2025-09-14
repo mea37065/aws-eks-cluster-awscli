@@ -8,44 +8,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive monitoring stack with Prometheus and Grafana
-- Security manifests with network policies and pod security policies
-- Terraform alternative for infrastructure deployment
-- Automated testing suite for cluster validation
-- GitHub Actions workflow for CI/CD
-- Makefile for simplified command execution
-- Detailed troubleshooting documentation
-- Security best practices guide
-- Cluster add-ons installation script
-- Example application deployments
+- Comprehensive monitoring stack with Prometheus, Grafana, and Jaeger (#4)
+- Velero backup automation for disaster recovery (#12)
+- GitOps integration with ArgoCD and Flux support (#6)
+- Cost optimization tools and analysis (#2)
+- Security hardening with Falco and OPA Gatekeeper (#3)
+- Helm charts for simplified deployment (#1)
+- Community engagement automation workflows
+- Multi-region deployment planning (#7)
+- Container security scanning with Trivy (#11)
 
 ### Enhanced
-- Improved error handling in all scripts
-- Better documentation with troubleshooting guide
-- Security hardening with proper IAM policies
-- Cost optimization recommendations
-- Performance monitoring capabilities
+- README with comprehensive badges and community features (#5)
+- Documentation with advanced usage examples
+- CI/CD pipeline with multi-platform testing
+- PowerShell module structure for better distribution
 
 ### Fixed
-- Missing IAM policy file for AWS Load Balancer Controller
-- Improved cleanup verification in destroy scripts
-- Better error messages and user feedback
+- VPC cleanup verification and error handling
+- EKS cluster deletion with proper resource cleanup
+- IAM role and policy management improvements
 
-## [1.0.0] - 2024-01-XX
+## [1.0.0] - 2024-09-14
 
 ### Added
-- Initial release with basic EKS cluster deployment
-- VPC creation with 3 AZs (public/private subnets)
-- EKS cluster with managed node groups
+- Initial EKS cluster deployment automation
+- VPC infrastructure with 3-AZ setup
 - AWS Load Balancer Controller integration
-- OIDC provider setup for IRSA
-- Complete cleanup scripts with verification
-- Basic documentation and README
+- Comprehensive cleanup scripts
+- Basic monitoring and logging setup
 
-### Features
-- Multi-AZ VPC infrastructure
-- EKS cluster v1.29 support
-- Auto-scaling node groups
-- Security best practices implementation
-- Interactive configuration prompts
-- Comprehensive cleanup procedures
+### Infrastructure
+- Multi-AZ VPC with public/private subnets
+- EKS cluster v1.29 with managed node groups
+- Auto-scaling configuration
+- Security groups and network ACLs
+- OIDC provider integration
+
+### Documentation
+- Complete setup and usage instructions
+- Troubleshooting guide
+- Architecture diagrams
+- Prerequisites and requirements
+
+## Contributors
+
+- [@uldyssian-sh](https://github.com/uldyssian-sh) - Project creator and maintainer
+- [@mea37065](https://github.com/mea37065) - Core contributor and collaborator
+
+## Community
+
+- [Discussions](https://github.com/mea37065/aws-eks-cluster-awscli/discussions) - Community discussions and Q&A
+- [Issues](https://github.com/mea37065/aws-eks-cluster-awscli/issues) - Bug reports and feature requests
+- [Pull Requests](https://github.com/mea37065/aws-eks-cluster-awscli/pulls) - Code contributions
+
+## Roadmap
+
+### v1.1.0 (Planned)
+- Multi-region deployment support
+- Advanced cost optimization features
+- Enhanced security scanning
+- Automated compliance reporting
+
+### v1.2.0 (Future)
+- Karpenter integration
+- Service mesh support
+- Advanced monitoring and alerting
+- Enterprise features and integrations
+
+---
+
+For more details about any release, see the [GitHub Releases](https://github.com/mea37065/aws-eks-cluster-awscli/releases) page.

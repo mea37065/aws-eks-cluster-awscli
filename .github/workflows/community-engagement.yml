@@ -1,0 +1,212 @@
+name: Community Engagement Automation
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Weekly on Monday
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, ready_for_review]
+  discussion:
+    types: [created]
+
+jobs:
+  welcome-contributors:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    steps:
+      - name: Welcome new contributors
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const welcomeMessage = `
+            ## Welcome to the EKS Community! 🎉
+            
+            Thank you for your contribution! Here are some helpful resources:
+            
+            ### 📚 Getting Started
+            - [Contributing Guidelines](CONTRIBUTING.md)
+            - [Code of Conduct](CODE_OF_CONDUCT.md)
+            - [Development Setup](docs/development.md)
+            
+            ### 🤝 Community
+            - Join our [Discussions](https://github.com/mea37065/aws-eks-cluster-awscli/discussions)
+            - Check out related issues and PRs
+            - Connect with @uldyssian-sh and @mea37065
+            
+            ### 🔍 Review Process
+            - Automated tests will run shortly
+            - Maintainers will review within 48 hours
+            - Feel free to ask questions in comments
+            
+            Thanks for making EKS better for everyone! 🚀
+            `;
+            
+            if (context.eventName === 'issues') {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: welcomeMessage
+              });
+            } else if (context.eventName === 'pull_request') {
+              github.rest.pulls.createReview({
+                pull_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: welcomeMessage,
+                event: 'COMMENT'
+              });
+            }
+
+  auto-label-issues:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened' && github.event_name == 'issues'
+    steps:
+      - name: Auto-label based on content
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = issue.body.toLowerCase();
+            
+            const labels = [];
+            
+            // Auto-labeling logic
+            if (title.includes('security') || body.includes('security')) {
+              labels.push('security');
+            }
+            if (title.includes('cost') || body.includes('cost')) {
+              labels.push('cost-optimization');
+            }
+            if (title.includes('monitoring') || body.includes('monitoring')) {
+              labels.push('monitoring');
+            }
+            if (title.includes('multi-region') || body.includes('multi-region')) {
+              labels.push('multi-region');
+            }
+            if (title.includes('backup') || body.includes('backup')) {
+              labels.push('backup');
+            }
+            
+            // Add priority labels
+            if (title.includes('critical') || title.includes('urgent')) {
+              labels.push('priority-high');
+            } else if (title.includes('enhancement') || title.includes('feature')) {
+              labels.push('enhancement');
+            }
+            
+            if (labels.length > 0) {
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: labels
+              });
+            }
+
+  weekly-community-update:
+    runs-on: ubuntu-latest
+    if: github.event.schedule
+    steps:
+      - name: Create weekly community update
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().split('T')[0];
+            
+            // Get recent activity
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              since: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+            });
+            
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all'
+            });
+            
+            const updateBody = `
+            # Weekly Community Update - ${date}
+            
+            ## 📊 This Week's Activity
+            
+            ### Issues
+            - **New issues**: ${issues.data.filter(i => !i.pull_request).length}
+            - **Closed issues**: ${issues.data.filter(i => !i.pull_request && i.state === 'closed').length}
+            
+            ### Pull Requests  
+            - **New PRs**: ${prs.data.length}
+            - **Merged PRs**: ${prs.data.filter(pr => pr.merged_at).length}
+            
+            ## 🎯 Focus Areas
+            - Multi-region EKS deployment (#7)
+            - Container security implementation (#9)
+            - Cost optimization strategies (#15)
+            
+            ## 🤝 Contributors
+            Special thanks to all contributors this week!
+            
+            ## 📅 Upcoming
+            - Karpenter integration planning
+            - Security hardening enhancements
+            - Community feedback sessions
+            
+            Join our [discussions](https://github.com/mea37065/aws-eks-cluster-awscli/discussions) to get involved!
+            `;
+            
+            // Create discussion for weekly update
+            const query = \`
+            mutation {
+              createDiscussion(input: {
+                repositoryId: "R_kgDOPvktUw"
+                categoryId: "DIC_kwDOPvktU84CvbRa"
+                title: "📅 Weekly Community Update - ${date}"
+                body: \${JSON.stringify(updateBody)}
+              }) {
+                discussion {
+                  id
+                  url
+                }
+              }
+            }
+            \`;
+            
+            await github.graphql(query);
+
+  pr-size-labeler:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened' && github.event_name == 'pull_request'
+    steps:
+      - name: Label PR by size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const changes = additions + deletions;
+            
+            let sizeLabel = '';
+            if (changes < 10) {
+              sizeLabel = 'size/XS';
+            } else if (changes < 50) {
+              sizeLabel = 'size/S';
+            } else if (changes < 200) {
+              sizeLabel = 'size/M';
+            } else if (changes < 500) {
+              sizeLabel = 'size/L';
+            } else {
+              sizeLabel = 'size/XL';
+            }
+            
+            github.rest.issues.addLabels({
+              issue_number: pr.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: [sizeLabel]
+            });
